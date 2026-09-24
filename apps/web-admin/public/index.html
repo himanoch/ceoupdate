@@ -1,0 +1,2488 @@
+<!DOCTYPE html>
+<html lang="th" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chatto Bot — AI Operations SaaS Platform | The Hill Land</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-base: #FAF8F5;
+      --bg-surface: #ffffff;
+      --bg-card: #ffffff;
+      --bg-card-hover: #f8fafc;
+      --border-subtle: rgba(0, 0, 0, 0.08);
+      --border-accent: rgba(245, 158, 11, 0.35);
+      --primary: #f59e0b;
+      --primary-light: #fbbf24;
+      --primary-dark: #d97706;
+      --primary-glow: rgba(245, 158, 11, 0.2);
+      --secondary: #0284c7;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-dim: #94a3b8;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --font-heading: 'Outfit', 'IBM Plex Sans Thai', sans-serif;
+      --font-body: 'Plus Jakarta Sans', 'IBM Plex Sans Thai', 'Sarabun', sans-serif;
+      --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.04), 0 10px 25px -5px rgba(0, 0, 0, 0.03);
+      --transition-smooth: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    [data-theme="dark"] {
+      --bg-base: #0b0f17;
+      --bg-surface: #121824;
+      --bg-card: rgba(22, 30, 46, 0.85);
+      --bg-card-hover: rgba(28, 38, 58, 0.95);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-accent: rgba(245, 158, 11, 0.35);
+      --primary: #f59e0b;
+      --primary-light: #fbbf24;
+      --primary-dark: #d97706;
+      --primary-glow: rgba(245, 158, 11, 0.25);
+      --secondary: #38bdf8;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --shadow-card: 0 10px 30px -10px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.05);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* App Shell Layout (Sidebar + Main Wrapper) */
+    .app-shell {
+      display: flex;
+      min-height: 100vh;
+      width: 100%;
+    }
+
+    /* Sidebar (Dabby.io style) */
+    .sidebar {
+      width: 250px;
+      min-width: 250px;
+      background: var(--bg-surface);
+      border-right: 1px solid var(--border-subtle);
+      display: flex;
+      flex-direction: column;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      z-index: 100;
+      transition: var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: 1.25rem 1.25rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .sidebar-brand-logo {
+      width: 38px;
+      height: 38px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.25);
+    }
+
+    .brand-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.5px;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.1;
+    }
+
+    .brand-badge {
+      font-size: 0.62rem;
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid var(--primary);
+      color: var(--primary-dark);
+      padding: 2px 7px;
+      border-radius: 20px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    .brand-subtext {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .sidebar-menu {
+      flex: 1;
+      padding: 1rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+      overflow-y: auto;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      position: relative;
+    }
+
+    .menu-item:hover {
+      background: rgba(245, 158, 11, 0.08);
+      color: var(--text-main);
+    }
+
+    .menu-item.active {
+      background: #fef3c7;
+      color: #b45309;
+      font-weight: 700;
+    }
+
+    [data-theme="dark"] .menu-item.active {
+      background: rgba(245, 158, 11, 0.2);
+      color: #fbbf24;
+    }
+
+    .menu-item .menu-icon {
+      font-size: 1.15rem;
+      width: 22px;
+      text-align: center;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-item .menu-text {
+      flex: 1;
+    }
+
+    .menu-item .menu-arrow {
+      font-size: 0.7rem;
+      color: var(--text-dim);
+    }
+
+    .sidebar-footer {
+      padding: 0.85rem;
+      border-top: 1px solid var(--border-subtle);
+      background: rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    [data-theme="dark"] .sidebar-footer {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    /* Main Content Wrapper */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      background: var(--bg-base);
+      min-height: 100vh;
+    }
+
+    /* Topbar */
+    .topbar {
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-subtle);
+      background: var(--bg-surface);
+      position: sticky;
+      top: 0;
+      z-index: 50;
+    }
+
+    .topbar-title {
+      font-family: var(--font-heading);
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .topbar-subtitle {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .topbar-right {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn-connect {
+      background: #f59e0b;
+      color: #ffffff;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+      transition: var(--transition-smooth);
+    }
+
+    .btn-connect:hover {
+      background: #d97706;
+      transform: translateY(-1px);
+    }
+
+    /* Content Body & Views */
+    .content-body {
+      flex: 1;
+      padding: 1.5rem 2rem 2.5rem;
+      max-width: 1440px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .content-view {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .content-view.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* KPI Cards Grid (Dabby.io style) */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      box-shadow: var(--shadow-card);
+      transition: var(--transition-smooth);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+    }
+
+    .kpi-icon-wrap {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.35rem;
+      flex-shrink: 0;
+    }
+
+    .kpi-val {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+
+    .kpi-label {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Bar Charts Visualization */
+    .chart-bars-wrap {
+      display: flex;
+      align-items: flex-end;
+      gap: 1.25rem;
+      height: 160px;
+      padding-top: 1.5rem;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .chart-bar-col {
+      flex: 1;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 0.5rem;
+    }
+
+    .chart-bar-fill {
+      width: 100%;
+      max-width: 32px;
+      border-radius: 6px 6px 0 0;
+      background: rgba(245, 158, 11, 0.35);
+      transition: height 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .chart-bar-col:hover .chart-bar-fill {
+      background: #f59e0b;
+    }
+
+    .chart-bar-col.active .chart-bar-fill {
+      background: #f59e0b;
+    }
+
+    .chart-bar-label {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    /* Glass Cards */
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.75rem;
+    }
+
+    .card-title {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-main);
+    }
+
+    /* Buttons */
+    .btn {
+      background: #f59e0b;
+      color: #fff;
+      border: none;
+      padding: 0.7rem 1.25rem;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: var(--transition-smooth);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.88rem;
+    }
+
+    .btn:hover {
+      background: #d97706;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid var(--border-subtle);
+    }
+
+    [data-theme="dark"] .btn-secondary {
+      background: #334155;
+      color: #f8fafc;
+    }
+
+    .btn-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    [data-theme="dark"] .btn-secondary:hover {
+      background: #475569;
+    }
+
+    .btn-success { background: var(--success); }
+    .btn-danger { background: var(--danger); }
+
+    /* Form Controls */
+    select.tenant-select {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border-subtle);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-family: inherit;
+      cursor: pointer;
+      outline: none;
+    }
+
+    .chat-input {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 0.75rem 1rem;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+    }
+
+    .chat-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .status-active {
+      background: rgba(16, 185, 129, 0.15);
+      color: #059669;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    [data-theme="dark"] .status-active { color: #34d399; }
+
+    .status-paused {
+      background: rgba(245, 158, 11, 0.15);
+      color: #d97706;
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    [data-theme="dark"] .status-paused { color: #fbbf24; }
+
+    /* Theme Toggle Button */
+    .theme-toggle-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-family: inherit;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .theme-toggle-btn:hover {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: var(--primary);
+    }
+
+    /* Sub Tabs (Used in Chat & Ingestion views) */
+    .sub-tabs-bar {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.5rem;
+    }
+
+    .sub-tab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    .sub-tab-btn.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    /* Tables */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th {
+      text-align: left;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
+    td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-subtle);
+      color: var(--text-main);
+    }
+
+    tr:hover td {
+      background: rgba(0, 0, 0, 0.02);
+    }
+
+    [data-theme="dark"] tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Inspector & Dossier Boxes */
+    .inspector-box {
+      background: #f8fafc;
+      padding: 1rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    [data-theme="dark"] .inspector-box {
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .inspector-box-title {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+    }
+
+    .inspector-box-content {
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--text-main);
+      font-weight: 500;
+    }
+
+    .inspector-box-content strong {
+      color: var(--text-main);
+      font-weight: 700;
+    }
+
+    .inspector-empty-text {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .dossier-box {
+      background: #f8fafc;
+      padding: 0.75rem;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.82rem;
+    }
+
+    [data-theme="dark"] .dossier-box {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .dossier-box-title {
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 700;
+      margin-bottom: 0.35rem;
+      letter-spacing: 0.5px;
+    }
+
+    /* Citation Box */
+    .citation-box {
+      margin-top: 0.65rem;
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      border-left: 3px solid #ea580c;
+      padding: 0.5rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    [data-theme="dark"] .citation-box {
+      background: rgba(249, 115, 22, 0.08);
+      border-color: rgba(249, 115, 22, 0.2);
+    }
+
+    .citation-title {
+      font-weight: 700;
+      color: #c2410c;
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    [data-theme="dark"] .citation-title { color: var(--primary-light); }
+
+    .citation-snippet {
+      color: #1e293b;
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    [data-theme="dark"] .citation-snippet { color: #cbd5e1; }
+
+    .citation-meta {
+      font-size: 0.7rem;
+      color: #64748b;
+      margin-top: 3px;
+      font-weight: 500;
+    }
+
+    /* Chat Bubbles */
+    .chat-messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: rgba(241, 245, 249, 0.7);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    [data-theme="dark"] .chat-messages {
+      background: rgba(11, 15, 23, 0.6);
+    }
+
+    .chat-bubble {
+      max-width: 82%;
+      padding: 0.85rem 1.15rem;
+      border-radius: 16px;
+      line-height: 1.5;
+      font-size: 0.92rem;
+      position: relative;
+      animation: popIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .chat-bubble.customer {
+      align-self: flex-end;
+      background: linear-gradient(135deg, #f59e0b, #ea580c);
+      color: #fff;
+      border-bottom-right-radius: 4px;
+    }
+
+    .chat-bubble.agent_ai {
+      align-self: flex-start;
+      background: #ffffff;
+      color: #0f172a;
+      border: 1px solid var(--border-subtle);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      border-bottom-left-radius: 4px;
+    }
+
+    [data-theme="dark"] .chat-bubble.agent_ai {
+      background: #1e293b;
+      color: #f8fafc;
+    }
+
+    .chat-bubble.system {
+      align-self: center;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px dashed var(--danger);
+      color: var(--danger);
+      font-size: 0.85rem;
+      text-align: center;
+    }
+
+    .prompt-chip {
+      background: #f1f5f9;
+      border: 1px solid var(--border-subtle);
+      color: #334155;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      cursor: pointer;
+      transition: var(--transition-smooth);
+    }
+
+    [data-theme="dark"] .prompt-chip {
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--text-muted);
+    }
+
+    .prompt-chip:hover {
+      border-color: var(--primary);
+      color: var(--text-main);
+      background: rgba(245, 158, 11, 0.1);
+    }
+
+    .split-view {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 1.5rem;
+    }
+
+    @media (max-width: 1024px) {
+      .split-view { grid-template-columns: 1fr; }
+      .sidebar { width: 72px; min-width: 72px; }
+      .sidebar .brand-title, .sidebar .brand-subtext, .sidebar .menu-text, .sidebar .menu-arrow, .sidebar-footer-item { display: none; }
+      .sidebar-header { justify-content: center; padding: 1rem 0; }
+      .menu-item { justify-content: center; }
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 1.25rem 2rem;
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--text-dim);
+      background: var(--bg-surface);
+      margin-top: auto;
+    }
+  </style>
+</head>
+<body>
+
+<div class="app-shell">
+  <!-- Left Sidebar (Dabby.io style) -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <div class="sidebar-brand-logo">🤖</div>
+      <div>
+        <div class="brand-title">
+          Chatto Bot <span class="brand-badge">AI Operations</span>
+        </div>
+        <div class="brand-subtext">The Hill Land Enterprise SaaS</div>
+      </div>
+    </div>
+
+    <!-- Navigation Menu (Dabby.io structure) -->
+    <nav class="sidebar-menu">
+      <div class="menu-item active" id="nav-dashboard" onclick="switchNav('dashboard')">
+        <span class="menu-icon">📈</span>
+        <span class="menu-text">แดชบอร์ด</span>
+      </div>
+      <div class="menu-item" id="nav-bots" onclick="switchNav('bots')">
+        <span class="menu-icon">🤖</span>
+        <span class="menu-text">บอท</span>
+      </div>
+      <div class="menu-item" id="nav-chat" onclick="switchNav('chat')">
+        <span class="menu-icon">💬</span>
+        <span class="menu-text">แชท</span>
+      </div>
+      <div class="menu-item" id="nav-knowledge" onclick="switchNav('knowledge')">
+        <span class="menu-icon">🗄️</span>
+        <span class="menu-text">แหล่งข้อมูล</span>
+      </div>
+      <div class="menu-item" id="nav-appointments" onclick="switchNav('appointments')">
+        <span class="menu-icon">🕒</span>
+        <span class="menu-text">การจัดตารางเวลา AI</span>
+      </div>
+      <div class="menu-item" id="nav-leads" onclick="switchNav('leads')">
+        <span class="menu-icon">🎯</span>
+        <span class="menu-text">Leads & ลูกค้า</span>
+      </div>
+      <div class="menu-item" id="nav-channels" onclick="switchNav('channels')">
+        <span class="menu-icon">🔌</span>
+        <span class="menu-text">การเชื่อมต่อ</span>
+      </div>
+      <div class="menu-item" id="nav-audit" onclick="switchNav('audit')">
+        <span class="menu-icon">📊</span>
+        <span class="menu-text">สถิติ & Funnel</span>
+      </div>
+    </nav>
+
+    <!-- Sidebar Footer: Tenant & Theme Switcher -->
+    <div class="sidebar-footer">
+      <div class="sidebar-footer-item">
+        <div style="font-size: 0.72rem; color: var(--text-muted); font-weight: 700; margin-bottom: 4px;">TENANT ธุรกิจ:</div>
+        <select id="tenantSelect" class="tenant-select" style="width: 100%;" onchange="switchTenant(this.value)">
+          <option value="the-hill-land" selected>The Hill Land (Design Partner)</option>
+          <option value="tenant-beta">Beta Living Development</option>
+        </select>
+      </div>
+
+      <div style="display: flex; gap: 0.5rem; align-items: center; justify-content: space-between; margin-top: 0.4rem;">
+        <button id="themeToggleBtn" class="theme-toggle-btn" style="flex: 1; justify-content: center;" onclick="toggleTheme()" title="สลับโหมดสว่าง/มืด (Light/Dark Mode)">
+          <span id="themeToggleIcon">🌙</span>
+          <span id="themeToggleText">Dark Mode</span>
+        </button>
+      </div>
+    </div>
+  </aside>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-wrapper">
+    <!-- Topbar -->
+    <header class="topbar">
+      <div>
+        <h1 class="topbar-title" id="pageTitle">แดชบอร์ด</h1>
+        <p class="topbar-subtitle" id="pageSubtitle">ภาพรวมการเชื่อมต่อและบทสนทนาของบอทคุณ</p>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-connect" onclick="openChannelModal()">
+          <span>⚡</span>
+          <span>เพิ่มการเชื่อมต่อ</span>
+        </button>
+        <div id="botGlobalState" class="status-badge status-active">
+          ● Agent Running
+        </div>
+      </div>
+    </header>
+
+    <!-- Content Workspace -->
+    <main class="content-body">
+
+      <!-- View 1: แดชบอร์ด (Dashboard Overview - Dabby.io style) -->
+      <section id="view-dashboard" class="content-view active">
+        <!-- Row 1: KPI Stat Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card" onclick="switchNav('channels')" style="cursor: pointer;">
+            <div class="kpi-icon-wrap" style="background: #fef3c7; color: #d97706;">
+              <span>🔌</span>
+            </div>
+            <div>
+              <div class="kpi-val" id="dashKpiChannels">2</div>
+              <div class="kpi-label">การเชื่อมต่อ (Channels)</div>
+            </div>
+          </div>
+
+          <div class="kpi-card" onclick="switchNav('chat')" style="cursor: pointer;">
+            <div class="kpi-icon-wrap" style="background: #e0f2fe; color: #0284c7;">
+              <span>💬</span>
+            </div>
+            <div>
+              <div class="kpi-val" id="dashKpiMessages">0</div>
+              <div class="kpi-label">แชททั้งหมด (Messages)</div>
+            </div>
+          </div>
+
+          <div class="kpi-card" onclick="switchNav('chat')" style="cursor: pointer;">
+            <div class="kpi-icon-wrap" style="background: #d1fae5; color: #059669;">
+              <span>⚡</span>
+            </div>
+            <div>
+              <div class="kpi-val" id="dashKpiActiveChats">0</div>
+              <div class="kpi-label">Active chat เดือนนี้</div>
+            </div>
+          </div>
+
+          <div class="kpi-card" onclick="switchNav('leads')" style="cursor: pointer;">
+            <div class="kpi-icon-wrap" style="background: #ede9fe; color: #7c3aed;">
+              <span>🎯</span>
+            </div>
+            <div>
+              <div class="kpi-val" id="dashKpiLeads">0</div>
+              <div class="kpi-label">Leads ที่ได้ (Captured)</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 2: Credits / Quota Card -->
+        <div class="card" style="margin-top: 1.25rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-weight: 700; font-size: 0.95rem;">Credits เดือนนี้</span>
+              <span class="status-badge status-active" style="font-size: 0.68rem; padding: 1px 6px;">FREE TIER</span>
+            </div>
+            <a href="javascript:void(0)" onclick="openChannelModal()" style="font-size: 0.8rem; color: #d97706; text-decoration: none; font-weight: 600;">ดูแพ็กเกจ (BYOK Active) ➔</a>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.85rem; font-size: 0.82rem; color: var(--text-muted);">
+            <span>Subscription Credits</span>
+            <span style="font-weight: 700; color: var(--text-main);"><span id="creditUsed">480</span> / 500</span>
+          </div>
+
+          <div style="height: 8px; border-radius: 999px; background: rgba(0,0,0,0.06); overflow: hidden; margin-top: 6px;">
+            <div id="creditProgressBar" style="height: 100%; border-radius: 999px; background: #10b981; width: 96%; transition: width 0.5s ease;"></div>
+          </div>
+
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.65rem; font-size: 0.75rem; color: var(--text-dim);">
+            <span>● Prepaid: 0 cr</span>
+            <span>รีเซ็ตล่าสุด: 24 Sep</span>
+          </div>
+        </div>
+
+        <!-- Row 3: Daily Activity Charts -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1.25rem;">
+          <!-- Chart 1: ปริมาณแชทใหม่ต่อวัน -->
+          <div class="card">
+            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>ปริมาณแชทใหม่ต่อวัน (คน)</span>
+              <span style="font-size: 0.75rem; color: var(--text-muted); font-weight: 500;">7 วันล่าสุด</span>
+            </div>
+            <div class="chart-bars-wrap">
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 35%;"></div><span class="chart-bar-label">พฤ</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 48%;"></div><span class="chart-bar-label">ศ</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 70%;"></div><span class="chart-bar-label">ส</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 85%;"></div><span class="chart-bar-label">อา</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 40%;"></div><span class="chart-bar-label">จ</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 60%;"></div><span class="chart-bar-label">อ</span></div>
+              <div class="chart-bar-col active"><div class="chart-bar-fill" style="height: 78%; background: #f59e0b;"></div><span class="chart-bar-label">วันนี้</span></div>
+            </div>
+          </div>
+
+          <!-- Chart 2: AI ตอบข้อความต่อวัน -->
+          <div class="card">
+            <div style="font-weight: 700; font-size: 0.95rem; margin-bottom: 0.5rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>AI ตอบข้อความต่อวัน (บอลลูน)</span>
+              <span class="status-badge status-active" style="font-size: 0.72rem;">อัตโนมัติ 100%</span>
+            </div>
+            <div class="chart-bars-wrap">
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 40%; background: #0284c7;"></div><span class="chart-bar-label">พฤ</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 55%; background: #0284c7;"></div><span class="chart-bar-label">ศ</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 78%; background: #0284c7;"></div><span class="chart-bar-label">ส</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 92%; background: #0284c7;"></div><span class="chart-bar-label">อา</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 45%; background: #0284c7;"></div><span class="chart-bar-label">จ</span></div>
+              <div class="chart-bar-col"><div class="chart-bar-fill" style="height: 65%; background: #0284c7;"></div><span class="chart-bar-label">อ</span></div>
+              <div class="chart-bar-col active"><div class="chart-bar-fill" style="height: 85%; background: #10b981;"></div><span class="chart-bar-label">วันนี้</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Row 4: Connected Channels Status & Recent Activity -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-top: 1.25rem;">
+          <!-- Channels -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 0.75rem;">
+              <div class="card-title" style="font-size: 0.95rem;">
+                <span>🔌 ช่องทางแชทที่เชื่อมต่อ</span>
+              </div>
+              <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.75rem;" onclick="openChannelModal()">⚙️ ตั้งค่าคีย์</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div class="inspector-box" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <span style="font-size: 1.25rem;">🟢</span>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.88rem;">LINE Official Account</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Webhook Ingestion Active (The Hill Land)</div>
+                  </div>
+                </div>
+                <span class="status-badge status-active">● Active</span>
+              </div>
+
+              <div class="inspector-box" style="display: flex; justify-content: space-between; align-items: center; padding: 0.75rem 1rem;">
+                <div style="display: flex; align-items: center; gap: 0.65rem;">
+                  <span style="font-size: 1.25rem;">🔵</span>
+                  <div>
+                    <div style="font-weight: 700; font-size: 0.88rem;">Facebook Messenger</div>
+                    <div style="font-size: 0.75rem; color: var(--text-muted);">Webhook Challenge & Send API Verified</div>
+                  </div>
+                </div>
+                <span class="status-badge status-active">● Active</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Leads -->
+          <div class="card">
+            <div class="card-header" style="margin-bottom: 0.75rem;">
+              <div class="card-title" style="font-size: 0.95rem;">
+                <span>🎯 Leads ล่าสุดที่บอทบันทึกได้</span>
+              </div>
+              <button class="btn btn-secondary" style="padding: 3px 8px; font-size: 0.75rem;" onclick="switchNav('leads')">ดูทั้งหมด ➔</button>
+            </div>
+            <div id="dashRecentLeadsList" style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.82rem;">
+              <div style="color: var(--text-dim); text-align: center; padding: 1.5rem;">กำลังโหลดข้อมูล Leads...</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 2: บอท (Agent Studio & Persona Versioning) -->
+      <section id="view-bots" class="content-view">
+        <div style="display: flex; justify-content: space-between; align-items: center; background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(2, 132, 199, 0.08)); border: 1px solid var(--border-accent); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; margin-bottom: 1.5rem;">
+          <div>
+            <div style="font-size: 0.75rem; text-transform: uppercase; color: var(--primary-dark); font-weight: 700; letter-spacing: 0.5px;">Active Agent Persona</div>
+            <div style="font-size: 1.35rem; font-weight: 800; font-family: var(--font-heading); color: var(--text-main); margin-top: 2px;" id="activePersonaDisplay">
+              น้อง Chatto (ผู้ช่วยอัจฉริยะ The Hill Land)
+            </div>
+            <div style="font-size: 0.8rem; color: var(--text-muted); margin-top: 4px;" id="activePromptMeta">
+              Published Ver: <code id="activePromptVer">v1</code> | Grounded Knowledge Base Ingestion Active
+            </div>
+          </div>
+          <div style="display: flex; gap: 0.75rem; align-items: center;">
+            <div class="status-badge status-active" id="activePromptStatusBadge">● Persona Live</div>
+            <button class="btn btn-secondary" style="font-size: 0.82rem;" onclick="refreshStudioData()">🔄 รีเฟรช Studio</button>
+          </div>
+        </div>
+
+        <div class="split-view">
+          <!-- Prompt Editor -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>🧠 Agent Persona & System Prompt Editor</span>
+              </div>
+              <span class="status-badge status-active">Governance & Versioning</span>
+            </div>
+
+            <form id="promptEditorForm" onsubmit="handlePromptSubmit(event)" style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <div>
+                <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">Persona Name (ชื่อเรียกตัวแทน AI) *</label>
+                <input type="text" id="promptPersonaName" class="chat-input" placeholder="เช่น น้อง Chatto, Chatto Pro Specialist" required style="width: 100%;">
+              </div>
+
+              <div>
+                <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">System Prompt & บุคลิกการสื่อสาร (Tone & Personality) *</label>
+                <textarea id="promptSystemContent" class="chat-input" rows="5" placeholder="กำหนดโทนเสียง บุคลิก คำลงท้าย กฎการสนทนา..." required style="width: 100%; font-size: 0.82rem; resize: vertical;"></textarea>
+              </div>
+
+              <div>
+                <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">Business Rules & Policy Guardrails (กฎธุรกิจและข้อห้าม)</label>
+                <textarea id="promptBusinessRules" class="chat-input" rows="4" placeholder="ข้อจำกัดทางธุรกิจ เช่น ห้ามแต่งราคา, ต้องระบุโฉนดครุฑแดงแท้, ส่งต่อเจ้าหน้าที่เมื่อฉุกเฉิน..." style="width: 100%; font-size: 0.82rem; resize: vertical;"></textarea>
+              </div>
+
+              <div style="display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 0.25rem;">
+                <button type="button" class="btn btn-secondary" onclick="savePromptDraft()">
+                  <span>💾 บันทึกแบบร่าง (Draft)</span>
+                </button>
+                <button type="submit" class="btn">
+                  <span>🚀 สร้างเวอร์ชันใหม่และเผยแพร่ (Publish)</span>
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Prompt Version History Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title">
+                <span>📜 Prompt Version History & Rollback</span>
+              </div>
+              <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="loadPromptVersions()">🔄 รีเฟรช</button>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Ver</th>
+                    <th>Persona Name</th>
+                    <th>สถานะ</th>
+                    <th>สร้างเมื่อ</th>
+                    <th>การดำเนินการ</th>
+                  </tr>
+                </thead>
+                <tbody id="promptVersionsTableBody">
+                  <tr><td colspan="5" style="text-align: center; color: var(--text-dim);">กำลังโหลด Version History...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 3: แชท (Chat / Simulator & Unified Inbox) -->
+      <section id="view-chat" class="content-view">
+        <div class="sub-tabs-bar">
+          <button class="sub-tab-btn active" id="subtab-sim-btn" onclick="switchChatSubtab('sim')">📱 Live Simulator & Guardrails</button>
+          <button class="sub-tab-btn" id="subtab-inbox-btn" onclick="switchChatSubtab('inbox')">📥 Unified Inbox (กล่องรวมแชท)</button>
+        </div>
+
+        <!-- Chat Subtab 1: Live Simulator -->
+        <div id="chat-subtab-sim">
+          <div class="split-view">
+            <!-- Chat Simulator Box -->
+            <div class="card" style="display: flex; flex-direction: column; height: 600px;">
+              <div class="card-header">
+                <div class="card-title">
+                  <span>📱 Channel Ingestion Sandbox (LINE OA / Web Simulator)</span>
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-muted);">
+                  User: <strong id="currentChatUser">Khun Somchai (081-xxx-xxxx)</strong>
+                </div>
+              </div>
+
+              <div class="chat-messages" id="chatMessages">
+                <div class="chat-bubble agent_ai">
+                  สวัสดีค่ะ! น้อง <strong>Chatto</strong> ผู้ช่วยอัจฉริยะจาก <strong>The Hill Land</strong> ยินดีให้บริการค่ะ 🌿<br><br>
+                  สอบถามข้อมูลแปลงที่ดินวิวเขาสวย โฉนดครุฑแดง น.ส.4 จ. (โซนกาญจนบุรี / สุพรรณบุรี) หรือโปรโมชั่นผ่อนตรง 0% ได้เลยนะคะ
+                  <div class="citation-box">
+                    <div class="citation-title">📌 ข้อมูลภาพรวมโครงการและกรรมสิทธิ์ที่ดิน The Hill Land</div>
+                    <div class="citation-snippet">ที่ดินทุกแปลงเป็นโฉนดครุฑแดงแท้ พร้อมโอนกรรมสิทธิ์ ณ สนง.ที่ดิน 100%</div>
+                    <div class="citation-meta">อัปเดต ณ 2026-09-20 | Verified Grounded Source</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="quick-prompts" style="margin-top: 0.75rem; display: flex; flex-wrap: wrap; gap: 0.4rem;">
+                <span style="font-size: 0.75rem; color: var(--text-dim); align-self: center;">คำถามทดสอบ:</span>
+                <div class="prompt-chip" onclick="sendQuickPrompt('สวัสดีครับ ขอดูที่ดินวิวเขางบไม่เกิน 5 แสน')">
+                  🏔️ สอบถามที่ดินงบไม่เกิน 5 แสน
+                </div>
+                <div class="prompt-chip" onclick="sendQuickPrompt('สนใจแปลง A1 ภูธารา ครับ เบอร์ 0812345678 นัดชมโครงการ')">
+                  🎯 สนใจแปลง A1 + เบอร์โทร (สร้าง Lead)
+                </div>
+                <div class="prompt-chip" onclick="sendQuickPrompt('ขอติดต่อเจ้าหน้าที่ อยากคุยกับคนหน่อยครับ')">
+                  🤝 ขอคุยกับเจ้าหน้าที่ (Human Handoff)
+                </div>
+                <div class="prompt-chip" onclick="sendQuickPrompt('ด่วนครับ! มีไฟไหม้หญ้าใกล้หม้อแปลงไฟฟ้าหน้าแปลง')">
+                  🚨 แจ้งเหตุฉุกเฉิน (Emergency Escalation)
+                </div>
+              </div>
+
+              <div style="margin-top: 0.75rem; display: flex; gap: 0.5rem;">
+                <input type="text" id="chatInput" class="chat-input" placeholder="พิมพ์ข้อความสอบถาม หรือเลือกคำถามทดสอบด้านบน..." onkeydown="if(event.key==='Enter') sendMessage()" style="flex: 1;">
+                <button class="btn" id="sendBtn" onclick="sendMessage()">
+                  <span>ส่งข้อความ</span> ➔
+                </button>
+              </div>
+            </div>
+
+            <!-- Inspector Panel -->
+            <div class="card" style="display: flex; flex-direction: column; gap: 1rem;">
+              <div class="card-header">
+                <div class="card-title">
+                  <span>🛡️ Agent Runtime & Policy Inspector</span>
+                </div>
+              </div>
+
+              <div class="inspector-box">
+                <div class="inspector-box-title">POLICY PRECEDENCE HIERARCHY</div>
+                <div class="inspector-box-content">
+                  1. <strong>System Policy</strong> (ความปลอดภัยและชีวิต/ทรัพย์สิน)<br>
+                  2. <strong>Tenant Policy</strong> (นโยบาย The Hill Land: โฉนด/ผ่อน 0%)<br>
+                  3. <strong>Vertical Policy</strong> (ห้ามแต่งราคา/ห้ามรับรองผลตอบแทน)<br>
+                  4. <strong>Workflow Instruction</strong> (ถามทีละประเด็น, ขอเบอร์สร้าง Lead)<br>
+                  5. <strong>Retrieved Knowledge</strong> (Untrusted facts grounded with citations)<br>
+                  6. <strong>User Message</strong> (Untrusted input - no injection allowed)
+                </div>
+              </div>
+
+              <div class="inspector-box">
+                <div class="inspector-box-title">LAST EXECUTED TOOLS & ACTIONS</div>
+                <div id="inspectorToolsList" style="display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.82rem;">
+                  <div class="inspector-empty-text">ยังไม่มีการเรียก tool ในเซสชันปัจจุบัน</div>
+                </div>
+              </div>
+
+              <div class="inspector-box">
+                <div class="inspector-box-title">CONVERSATION CONTROLS</div>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                  <button class="btn btn-secondary" style="flex: 1; font-size: 0.82rem;" onclick="toggleBotPause(true)">
+                    ⏸️ Pause Bot (Manual Handoff)
+                  </button>
+                  <button class="btn btn-success" style="flex: 1; font-size: 0.82rem;" onclick="toggleBotPause(false)">
+                    ▶️ Resume Bot
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Chat Subtab 2: Unified Inbox -->
+        <div id="chat-subtab-inbox" style="display: none;">
+          <div class="inbox-container" style="display: grid; grid-template-columns: 320px 1fr 300px; gap: 1.25rem; height: 650px;">
+            <!-- Col 1: Conversations List -->
+            <div class="card" style="display: flex; flex-direction: column; overflow: hidden;">
+              <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 0.4rem;">
+                <div class="card-title" style="font-size: 0.95rem;">📥 รายการแชท (Inbox)</div>
+                <button class="btn btn-secondary" style="padding: 2px 6px; font-size: 0.72rem;" onclick="loadInboxConversations()">🔄</button>
+              </div>
+              <div style="display: flex; gap: 0.25rem; margin-bottom: 0.5rem; overflow-x: auto;">
+                <button class="prompt-chip" id="filter-all" onclick="setInboxFilter('all')">ทั้งหมด</button>
+                <button class="prompt-chip" id="filter-handoff" onclick="setInboxFilter('handoff_requested')">🚨 รอเจ้าหน้าที่</button>
+                <button class="prompt-chip" id="filter-bot" onclick="setInboxFilter('active_bot')">🤖 AI</button>
+              </div>
+              <div class="conv-list" id="inboxConvList" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.5rem;">
+                <div style="text-align: center; color: var(--text-dim); padding: 1.5rem;">กำลังโหลดข้อความ...</div>
+              </div>
+            </div>
+
+            <!-- Col 2: Chat Stream -->
+            <div class="card" style="display: flex; flex-direction: column; overflow: hidden;">
+              <div class="card-header" style="margin-bottom: 0.5rem; padding-bottom: 0.4rem;">
+                <div class="card-title" style="font-size: 0.95rem;" id="inboxThreadTitle">บทสนทนา</div>
+              </div>
+              <div class="inbox-messages" id="inboxMessages" style="flex: 1; overflow-y: auto; padding: 0.75rem; display: flex; flex-direction: column; gap: 0.75rem; background: rgba(0,0,0,0.02); border-radius: var(--radius-sm);">
+                <div style="text-align: center; color: var(--text-dim); margin-top: 3rem;">👈 เลือกบทสนทนาจากรายการทางซ้าย</div>
+              </div>
+              <div class="chat-input-area" id="inboxInputArea" style="display: none; margin-top: 0.5rem; display: flex; gap: 0.4rem;">
+                <input type="text" id="inboxInput" class="chat-input" placeholder="พิมพ์ข้อความตอบกลับลูกค้า..." onkeydown="if(event.key==='Enter') sendInboxAction()" style="flex: 1;">
+                <button class="btn" id="inboxSendBtn" onclick="sendInboxAction()"><span>ส่ง</span> ➔</button>
+              </div>
+            </div>
+
+            <!-- Col 3: Customer Dossier -->
+            <div class="card" style="display: flex; flex-direction: column; gap: 0.75rem; overflow-y: auto;">
+              <div class="card-header" style="margin-bottom: 0; padding-bottom: 0.35rem;">
+                <div class="card-title" style="font-size: 0.9rem;">📋 ข้อมูลลูกค้า (Dossier)</div>
+              </div>
+              <div class="dossier-box">
+                <div class="dossier-box-title">CONTACT IDENTITY</div>
+                <div><strong>ชื่อ:</strong> <span id="dossierContactName">-</span></div>
+                <div><strong>เบอร์:</strong> <span id="dossierContactPhone" style="color: #ea580c; font-weight: 700;">-</span></div>
+                <div><strong>ช่องทาง:</strong> <span id="dossierChannelType">-</span></div>
+              </div>
+              <div class="dossier-box">
+                <div class="dossier-box-title">ASSOCIATED LEAD</div>
+                <div><strong>โซน:</strong> <span id="dossierLeadZone">-</span></div>
+                <div><strong>งบ:</strong> <span id="dossierLeadBudget">-</span></div>
+                <div><strong>สถานะ:</strong> <span id="dossierLeadStatus">-</span></div>
+              </div>
+              <div class="dossier-box">
+                <div class="dossier-box-title">STAFF ASSIGNMENT</div>
+                <select id="dossierAssignSelect" class="tenant-select" style="width: 100%; margin-bottom: 4px;">
+                  <option value="">-- ยังไม่มอบหมาย --</option>
+                  <option value="Sarah Sales">Sarah Sales (VIP)</option>
+                  <option value="Korn Specialist">Korn (Specialist)</option>
+                </select>
+                <button class="btn btn-secondary" style="width: 100%; font-size: 0.75rem; justify-content: center; padding: 4px;" onclick="saveDossierAssignment()">💾 บันทึกผู้ดูแล</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 4: แหล่งข้อมูล (Knowledge Base & Ingestion) -->
+      <section id="view-knowledge" class="content-view">
+        <div class="split-view">
+          <!-- Ingestion Form -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📚 Ingest Knowledge Document</span></div>
+              <span class="status-badge status-active">RAG / Grounded KB</span>
+            </div>
+
+            <form id="ingestForm" onsubmit="handleIngestSubmit(event)" style="display: flex; flex-direction: column; gap: 0.85rem;">
+              <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 0.75rem;">
+                <div>
+                  <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">ชื่อเอกสาร / Title *</label>
+                  <input type="text" id="ingestTitle" class="chat-input" placeholder="เช่น ตารางราคาที่ดินอัปเดต ก.ย. 2026" required style="width: 100%;">
+                </div>
+                <div>
+                  <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">ประเภทข้อมูล *</label>
+                  <select id="ingestType" class="tenant-select" style="width: 100%; height: 38px;">
+                    <option value="text">Text / Markdown</option>
+                    <option value="csv">CSV (ตารางข้อมูล)</option>
+                    <option value="faq">FAQ / ถามตอบ</option>
+                    <option value="pdf">PDF Text Extract</option>
+                  </select>
+                </div>
+              </div>
+
+              <div>
+                <div style="font-size: 0.72rem; color: var(--text-dim); margin-bottom: 0.35rem;">เทมเพลตตัวอย่างข้อมูลด่วน:</div>
+                <div style="display: flex; gap: 0.4rem; flex-wrap: wrap;">
+                  <button type="button" class="prompt-chip" onclick="loadSampleCsv()">📊 ตารางแปลงที่ดิน (CSV)</button>
+                  <button type="button" class="prompt-chip" onclick="loadSampleTextPolicy()">📜 นโยบายโฉนด & สิทธิ์ (Text)</button>
+                  <button type="button" class="prompt-chip" onclick="loadSampleFaq()">❓ FAQ กฎหมายผ่อนตรง (FAQ)</button>
+                </div>
+              </div>
+
+              <div>
+                <label style="font-size: 0.78rem; color: var(--text-muted); font-weight: 600; display: block; margin-bottom: 4px;">เนื้อหาเอกสาร (Content) *</label>
+                <textarea id="ingestContent" class="chat-input" rows="7" placeholder="วางเนื้อหาเอกสาร, ข้อความ หรือ CSV ที่นี่..." required style="width: 100%; font-family: monospace; font-size: 0.82rem; resize: vertical;"></textarea>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="font-size: 0.75rem; color: var(--text-dim);">Auto-Chunking ~300 chars, SHA-256 Deduplication</div>
+                <button type="submit" class="btn" id="ingestSubmitBtn"><span>🚀 ประมวลผล Chunks</span></button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Ingested Sources Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>📑 Ingested Knowledge Sources</span></div>
+              <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 0.75rem;" onclick="loadKnowledgeSources()">🔄 รีเฟรช</button>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Source ID</th>
+                    <th>ชื่อเอกสาร</th>
+                    <th>ประเภท</th>
+                    <th>Chunks</th>
+                    <th>Effective Date</th>
+                    <th>จัดการ</th>
+                  </tr>
+                </thead>
+                <tbody id="knowledgeSourcesTableBody">
+                  <tr><td colspan="6" style="text-align: center; color: var(--text-dim);">กำลังโหลด...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 5: การจัดตารางเวลา AI (AI Appointments & Site Visits) -->
+      <section id="view-appointments" class="content-view">
+        <div class="card" style="margin-bottom: 1.25rem;">
+          <div class="card-header">
+            <div class="card-title">
+              <span>🕒 การจัดตารางเวลา AI (AI Calendar & Site Visit Bookings)</span>
+            </div>
+            <button class="btn" onclick="openNewBookingModal()">+ เพิ่มการนัดหมาย</button>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">
+            ตารางการนัดหมายที่ลูกค้าจองผ่าน AI Bot (LINE OA & Facebook Messenger) เพื่อเข้าชมแปลงที่ดินจริง ณ โครงการ <strong>The Hill Land</strong> (กาญจนบุรี / สุพรรณบุรี)
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Booking ID</th>
+                  <th>ชื่อลูกค้า</th>
+                  <th>เบอร์ติดต่อ</th>
+                  <th>แปลงที่สนใจ</th>
+                  <th>วัน-เวลานัดชม</th>
+                  <th>ผู้ดูแล (Specialist)</th>
+                  <th>สถานะ</th>
+                  <th>การดำเนินการ</th>
+                </tr>
+              </thead>
+              <tbody id="appointmentsTableBody">
+                <tr>
+                  <td><code>BK-2026-0927</code></td>
+                  <td><strong>คุณสมชาย ชาญวิทย์</strong></td>
+                  <td style="color: #ea580c; font-weight: 600;">081-234-5678</td>
+                  <td>แปลง A1 ภูธารา (100 ตร.ว.)</td>
+                  <td>เสาร์ 27 ก.ย. 2026 (10:00 น.)</td>
+                  <td>Sarah Sales (VIP)</td>
+                  <td><span class="status-badge status-active">● ยืนยันแล้ว (Confirmed)</span></td>
+                  <td><button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="alert('ส่ง SMS และ LINE แจ้งเตือนลูกค้าเรียบร้อยแล้ว')">📲 ส่งเตือน</button></td>
+                </tr>
+                <tr>
+                  <td><code>BK-2026-0928</code></td>
+                  <td><strong>คุณวิภาดา รุ่งเรือง</strong></td>
+                  <td style="color: #ea580c; font-weight: 600;">089-876-5432</td>
+                  <td>แปลง B1 กรีนวัลเลย์ (200 ตร.ว.)</td>
+                  <td>อาทิตย์ 28 ก.ย. 2026 (14:00 น.)</td>
+                  <td>Korn Specialist</td>
+                  <td><span class="status-badge status-paused">○ รอยืนยัน (Pending)</span></td>
+                  <td><button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="alert('ยืนยันนัดหมายเรียบร้อยแล้ว')">✅ ยืนยัน</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 6: Leads & ลูกค้า (Leads Pipeline & Property Inventory) -->
+      <section id="view-leads" class="content-view">
+        <div style="display: flex; flex-direction: column; gap: 1.5rem;">
+          <!-- Leads Table -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>🎯 Captured Leads Pipeline (The Hill Land)</span></div>
+              <button class="btn btn-secondary" onclick="loadLeads()">🔄 รีเฟรช</button>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Lead ID</th>
+                    <th>เบอร์ติดต่อ</th>
+                    <th>โซนที่สนใจ</th>
+                    <th>งบสูงสุด (บาท)</th>
+                    <th>Source</th>
+                    <th>สถานะ</th>
+                    <th>วันที่สร้าง</th>
+                  </tr>
+                </thead>
+                <tbody id="leadsTableBody">
+                  <tr><td colspan="7" style="text-align: center; color: var(--text-dim);">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Inventory Status -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title"><span>🏡 Authoritative Land Inventory & Price Register</span></div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">Data Source: Vertical Pack (the-hill-land)</div>
+            </div>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Plot ID</th>
+                    <th>โครงการ</th>
+                    <th>แปลง</th>
+                    <th>ขนาด (ตร.ว.)</th>
+                    <th>ราคา (บาท)</th>
+                    <th>เอกสารสิทธิ์</th>
+                    <th>สถานะ</th>
+                    <th>วันที่ยืนยันราคา</th>
+                  </tr>
+                </thead>
+                <tbody id="inventoryTableBody">
+                  <tr><td colspan="8" style="text-align: center; color: var(--text-dim);">กำลังโหลดข้อมูล...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 7: การเชื่อมต่อ (Channel Integrations) -->
+      <section id="view-channels" class="content-view">
+        <div class="card" style="margin-bottom: 1.25rem;">
+          <div class="card-header">
+            <div class="card-title"><span>🔌 การเชื่อมต่อช่องทางแชท (Channel Integrations & Webhooks)</span></div>
+            <button class="btn" onclick="openChannelModal()">⚙️ ตั้งค่าคีย์ API</button>
+          </div>
+          <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1.25rem;">
+            เชื่อมต่อช่องทางสื่อสารจากลูกค้าของคุณเข้าสู่ระบบ <strong>Chatto Bot</strong> เพื่อให้ AI ตอบแชทอัตโนมัติพร้อมอ้างอิงโฉนดที่ดินจริง
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem;">
+            <!-- LINE OA Card -->
+            <div class="inspector-box" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 1.3rem;">🟢</span>
+                  <span style="font-weight: 700; font-size: 1.05rem;">LINE Official Account</span>
+                </div>
+                <span id="viewLineBadge" class="status-badge status-active">● Active</span>
+              </div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">
+                Webhook URL สำหรับวางใน LINE Developers Console:
+              </div>
+              <div style="display: flex; gap: 0.35rem;">
+                <input type="text" id="viewLineWebhookUrl" class="chat-input" readonly style="font-family: monospace; font-size: 0.78rem; flex: 1;">
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="copyInputText('viewLineWebhookUrl')">📋 คัดลอก</button>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <button class="btn" style="flex: 1; font-size: 0.82rem; justify-content: center;" onclick="openChannelModal()">⚙️ แก้ไข Credentials</button>
+                <button class="btn btn-secondary" style="font-size: 0.82rem;" onclick="testSimulateLine()">🧪 ทดสอบส่ง</button>
+              </div>
+            </div>
+
+            <!-- Facebook Messenger Card -->
+            <div class="inspector-box" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="font-size: 1.3rem;">🔵</span>
+                  <span style="font-weight: 700; font-size: 1.05rem;">Facebook Messenger</span>
+                </div>
+                <span id="viewFbBadge" class="status-badge status-active">● Active</span>
+              </div>
+              <div style="font-size: 0.82rem; color: var(--text-muted);">
+                Callback URL สำหรับวางใน Meta for Developers:
+              </div>
+              <div style="display: flex; gap: 0.35rem;">
+                <input type="text" id="viewFbWebhookUrl" class="chat-input" readonly style="font-family: monospace; font-size: 0.78rem; flex: 1;">
+                <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem;" onclick="copyInputText('viewFbWebhookUrl')">📋 คัดลอก</button>
+              </div>
+              <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                <button class="btn" style="flex: 1; font-size: 0.82rem; justify-content: center;" onclick="openChannelModal()">⚙️ แก้ไข Credentials</button>
+                <button class="btn btn-secondary" style="font-size: 0.82rem;" onclick="testSimulateFacebook()">🧪 ทดสอบส่ง</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- View 8: สถิติ & Funnel (Audit & Analytics) -->
+      <section id="view-audit" class="content-view">
+        <div class="kpi-grid" style="margin-bottom: 1.5rem;">
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #e0f2fe; color: #0284c7;">💬</div>
+            <div><div class="kpi-val" id="statMessages">0</div><div class="kpi-label">ข้อความที่ได้รับ (Messages)</div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #ede9fe; color: #7c3aed;">🎯</div>
+            <div><div class="kpi-val" id="statLeads">0</div><div class="kpi-label">Leads ที่บันทึกได้ (Leads)</div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #fef3c7; color: #d97706;">🤝</div>
+            <div><div class="kpi-val" id="statHandoffs">0</div><div class="kpi-label">ส่งต่อคน (Human Handoffs)</div></div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icon-wrap" style="background: #d1fae5; color: #059669;">📊</div>
+            <div><div class="kpi-val" id="statConversion">0%</div><div class="kpi-label">อัตราเปลี่ยนเป็น Lead (%)</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title"><span>🛡️ Immutable Audit Trail</span></div>
+            <button class="btn btn-secondary" onclick="loadAuditLogs()">🔄 รีเฟรช</button>
+          </div>
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Audit ID</th>
+                  <th>Correlation ID</th>
+                  <th>Action</th>
+                  <th>Actor</th>
+                  <th>Resource</th>
+                  <th>Payload Summary</th>
+                  <th>Timestamp</th>
+                </tr>
+              </thead>
+              <tbody id="auditTableBody">
+                <tr><td colspan="7" style="text-align: center; color: var(--text-dim);">กำลังโหลดข้อมูล...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+      Chatto Bot AI Operations Platform &copy; 2026 | Built for The Hill Land &amp; Multi-Tenant Commercial Expansion
+    </footer>
+  </div>
+</div>
+
+<!-- Channel Integrations Modal (LINE OA & Facebook Messenger) -->
+<div id="channelModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.78); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;">
+  <div class="card" style="width: 100%; max-width: 980px; max-height: 90vh; display: flex; flex-direction: column; gap: 0.85rem; overflow: hidden;">
+    <div class="card-header" style="margin-bottom: 0.25rem;">
+      <div class="card-title" style="font-size: 1.2rem;">
+        <span>🔌 เชื่อมต่อช่องทางแชท (Channel Integrations & Webhook Setup)</span>
+      </div>
+      <button class="btn btn-secondary" style="padding: 4px 10px;" onclick="closeChannelModal()">✕ ปิด</button>
+    </div>
+
+    <div style="font-size: 0.85rem; color: var(--text-muted);">
+      จัดการ Webhook Callback URLs และคีย์เชื่อมต่อ (BYOK) สำหรับ <strong>LINE OA</strong> และ <strong>Facebook Messenger</strong> ของ Tenant ปัจจุบัน: <strong id="channelModalTenantDisplay" style="color: #ea580c;">The Hill Land</strong>
+    </div>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; overflow-y: auto; padding-right: 0.25rem; flex: 1;">
+      <!-- Card 1: LINE OA -->
+      <div class="inspector-box" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.3rem;">🟢</span>
+            <span style="font-weight: 700; font-size: 1.05rem;">LINE Official Account</span>
+          </div>
+          <span id="lineStatusBadge" class="status-badge status-active">● เชื่อมต่อแล้ว</span>
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">LINE WEBHOOK URL (นำไปวางใน LINE Developers)</label>
+          <div style="display: flex; gap: 0.35rem;">
+            <input type="text" id="lineWebhookUrlInput" class="chat-input" readonly style="font-family: monospace; font-size: 0.78rem; padding: 6px 10px; flex: 1;">
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem; white-space: nowrap;" onclick="copyInputText('lineWebhookUrlInput')">📋 คัดลอก</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">CHANNEL ID</label>
+          <input type="text" id="lineChannelIdInput" class="chat-input" placeholder="เช่น 1650000000" style="width: 100%; font-family: monospace; font-size: 0.82rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">CHANNEL SECRET * (ใช้ตรวจสอบ x-line-signature)</label>
+          <input type="password" id="lineSecretInput" class="chat-input" placeholder="ใส่ Channel Secret จาก Basic Settings..." style="width: 100%; font-family: monospace; font-size: 0.82rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">CHANNEL ACCESS TOKEN (LONG-LIVED) *</label>
+          <textarea id="lineTokenInput" class="chat-input" rows="3" placeholder="ใส่ Channel Access Token จาก Messaging API..." style="width: 100%; font-family: monospace; font-size: 0.78rem; resize: vertical;"></textarea>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.04); border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.75rem; line-height: 1.5; border: 1px solid var(--border-subtle);">
+          <strong style="color: #ea580c;">📌 ขั้นตอนใน LINE Developers:</strong><br>
+          1. เข้า <strong>developers.line.biz</strong> ➔ Messaging API Channel<br>
+          2. แท็บ <strong>Messaging API</strong> ➔ วาง Webhook URL ➔ เปิด <strong>Use Webhook</strong><br>
+          3. กด <strong>Verify</strong> (ต้องขึ้น Success 200 OK)<br>
+          4. ก๊อปปี้ <strong>Channel Secret</strong> และ <strong>Access Token</strong> มาบันทึกที่นี่
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: auto;">
+          <button class="btn" style="flex: 1; font-size: 0.82rem; justify-content: center;" onclick="saveLineChannelConfig()">💾 บันทึก LINE</button>
+          <button class="btn btn-secondary" style="font-size: 0.82rem;" onclick="testSimulateLine()">🧪 ทดสอบส่ง LINE</button>
+        </div>
+      </div>
+
+      <!-- Card 2: Facebook Messenger -->
+      <div class="inspector-box" style="display: flex; flex-direction: column; gap: 0.75rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <span style="font-size: 1.3rem;">🔵</span>
+            <span style="font-weight: 700; font-size: 1.05rem;">Facebook Messenger</span>
+          </div>
+          <span id="fbStatusBadge" class="status-badge status-active">● เชื่อมต่อแล้ว</span>
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">CALLBACK URL (นำไปวางใน Meta for Developers)</label>
+          <div style="display: flex; gap: 0.35rem;">
+            <input type="text" id="fbWebhookUrlInput" class="chat-input" readonly style="font-family: monospace; font-size: 0.78rem; padding: 6px 10px; flex: 1;">
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem; white-space: nowrap;" onclick="copyInputText('fbWebhookUrlInput')">📋 คัดลอก</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">VERIFY TOKEN (สำหรับยืนยัน Hub Challenge)</label>
+          <div style="display: flex; gap: 0.35rem;">
+            <input type="text" id="fbVerifyTokenInput" class="chat-input" style="font-family: monospace; font-size: 0.82rem; padding: 6px 10px; flex: 1;">
+            <button class="btn btn-secondary" style="padding: 4px 10px; font-size: 0.78rem; white-space: nowrap;" onclick="copyInputText('fbVerifyTokenInput')">📋 คัดลอก</button>
+          </div>
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">APP SECRET * (ใช้ตรวจสอบ x-hub-signature-256)</label>
+          <input type="password" id="fbSecretInput" class="chat-input" placeholder="ใส่ App Secret จาก App Settings > Basic..." style="width: 100%; font-family: monospace; font-size: 0.82rem;">
+        </div>
+
+        <div>
+          <label style="font-size: 0.76rem; color: var(--text-muted); font-weight: 700; display: block; margin-bottom: 4px;">PAGE ACCESS TOKEN *</label>
+          <textarea id="fbTokenInput" class="chat-input" rows="3" placeholder="ใส่ Page Access Token จาก Messenger API Setup..." style="width: 100%; font-family: monospace; font-size: 0.78rem; resize: vertical;"></textarea>
+        </div>
+
+        <div style="background: rgba(0,0,0,0.04); border-radius: 6px; padding: 0.65rem 0.85rem; font-size: 0.75rem; line-height: 1.5; border: 1px solid var(--border-subtle);">
+          <strong style="color: #0284c7;">📌 ขั้นตอนใน Meta for Developers:</strong><br>
+          1. เข้า <strong>developers.facebook.com</strong> ➔ App ➔ Messenger Setup<br>
+          2. <strong>Webhooks</strong> ➔ กด <strong>Add Callback URL</strong> ➔ วาง Callback URL และ Verify Token ➔ กด <strong>Verify and Save</strong><br>
+          3. กด <strong>Add Subscriptions</strong> ➔ ติ๊กเลือก <strong>messages</strong><br>
+          4. ก๊อปปี้ <strong>App Secret</strong> และ <strong>Page Access Token</strong> มาบันทึกที่นี่
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; margin-top: auto;">
+          <button class="btn" style="flex: 1; font-size: 0.82rem; justify-content: center;" onclick="saveFacebookChannelConfig()">💾 บันทึก Facebook</button>
+          <button class="btn btn-secondary" style="font-size: 0.82rem;" onclick="testSimulateFacebook()">🧪 ทดสอบส่ง FB</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Chunk Viewer Modal -->
+<div id="chunkModal" style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.75); backdrop-filter: blur(8px); z-index: 1000; align-items: center; justify-content: center; padding: 2rem;">
+  <div class="card" style="width: 100%; max-width: 800px; max-height: 85vh; display: flex; flex-direction: column;">
+    <div class="card-header">
+      <div class="card-title"><span id="chunkModalTitle">📑 Ingested Chunks</span></div>
+      <button class="btn btn-secondary" style="padding: 4px 8px;" onclick="closeChunkModal()">✕ ปิด</button>
+    </div>
+    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 0.75rem;" id="chunkModalMeta"></div>
+    <div id="chunkModalList" style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; padding-right: 0.25rem;"></div>
+  </div>
+</div>
+
+<script>
+  let activeTenant = 'the-hill-land';
+  let currentConversationId = null;
+
+  function getApiHeaders(extra = {}) {
+    return {
+      'x-tenant-id': activeTenant,
+      'Authorization': `Bearer test-token:${activeTenant}:admin:admin_dashboard`,
+      ...extra
+    };
+  }
+
+  // --- Dabby.io Style Navigation Switcher ---
+  const navTitles = {
+    'dashboard': { title: 'แดชบอร์ด', subtitle: 'ภาพรวมการเชื่อมต่อและบทสนทนาของบอทคุณ' },
+    'bots': { title: 'บอท', subtitle: 'จัดการ Persona, บุคลิกเสียง, System Prompt และกฎความปลอดภัย' },
+    'chat': { title: 'แชท', subtitle: 'กล่องข้อความรวม (Inbox) และตัวจำลองบทสนทนาสด (Simulator)' },
+    'knowledge': { title: 'แหล่งข้อมูล', subtitle: 'คลังความรู้ RAG, เอกสารโฉนด, ตารางราคาที่ดิน และ FAQ' },
+    'appointments': { title: 'การจัดตารางเวลา AI', subtitle: 'ระบบนัดหมายและตารางเวลาเข้าชมแปลงที่ดินอัตโนมัติ' },
+    'leads': { title: 'Leads & ลูกค้า', subtitle: 'รายชื่อผู้สนใจแปลงที่ดินและทะเบียนสถานะแปลงขาย' },
+    'channels': { title: 'การเชื่อมต่อ', subtitle: 'การเชื่อมต่อ LINE Official Account และ Facebook Messenger' },
+    'audit': { title: 'สถิติ & Funnel', subtitle: 'วิเคราะห์อัตราการปิดการขาย (Conversion) และ Audit Trail ที่แก้ไขไม่ได้' },
+  };
+
+  function switchNav(navId) {
+    document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
+    const activeItem = document.getElementById(`nav-${navId}`);
+    if (activeItem) activeItem.classList.add('active');
+
+    const info = navTitles[navId] || { title: 'แดชบอร์ด', subtitle: 'ภาพรวมการเชื่อมต่อ' };
+    document.getElementById('pageTitle').innerText = info.title;
+    document.getElementById('pageSubtitle').innerText = info.subtitle;
+
+    document.querySelectorAll('.content-view').forEach(el => el.classList.remove('active'));
+    const targetView = document.getElementById(`view-${navId}`);
+    if (targetView) targetView.classList.add('active');
+
+    if (navId === 'dashboard') { loadAnalytics(); loadLeads(); loadDashboardData(); }
+    if (navId === 'bots') { refreshStudioData(); }
+    if (navId === 'chat') { loadInboxConversations(); }
+    if (navId === 'knowledge') { loadKnowledgeSources(); }
+    if (navId === 'leads') { loadLeads(); loadInventory(); }
+    if (navId === 'channels') { loadChannelConfigs(); }
+    if (navId === 'audit') { loadAnalytics(); loadAuditLogs(); }
+  }
+
+  function switchChatSubtab(sub) {
+    document.getElementById('subtab-sim-btn').classList.toggle('active', sub === 'sim');
+    document.getElementById('subtab-inbox-btn').classList.toggle('active', sub === 'inbox');
+    document.getElementById('chat-subtab-sim').style.display = sub === 'sim' ? 'block' : 'none';
+    document.getElementById('chat-subtab-inbox').style.display = sub === 'inbox' ? 'block' : 'none';
+    if (sub === 'inbox') loadInboxConversations();
+  }
+
+  // --- Dashboard Data Loader ---
+  async function loadDashboardData() {
+    try {
+      const res = await fetch('/api/analytics', { headers: getApiHeaders() });
+      const data = await res.json();
+      if (data.metrics) {
+        document.getElementById('dashKpiMessages').innerText = data.metrics.messagesReceived || 0;
+        document.getElementById('dashKpiActiveChats').innerText = Math.max(0, (data.metrics.messagesReceived || 0) - (data.metrics.handoffsTriggered || 0));
+        document.getElementById('dashKpiLeads').innerText = data.metrics.leadsCaptured || 0;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // --- Channel Config Functions ---
+  async function openChannelModal() {
+    document.getElementById('channelModal').style.display = 'flex';
+    document.getElementById('channelModalTenantDisplay').innerText = activeTenant === 'the-hill-land' ? 'The Hill Land' : activeTenant;
+    await loadChannelConfigs();
+  }
+
+  function closeChannelModal() {
+    document.getElementById('channelModal').style.display = 'none';
+  }
+
+  async function loadChannelConfigs() {
+    try {
+      const res = await fetch('/api/channels/config', { headers: getApiHeaders() });
+      const data = await res.json();
+      if (!data.success) return;
+
+      // LINE
+      document.getElementById('lineWebhookUrlInput').value = data.line.webhookUrl;
+      const vLine = document.getElementById('viewLineWebhookUrl');
+      if (vLine) vLine.value = data.line.webhookUrl;
+      document.getElementById('lineChannelIdInput').value = data.line.channelId || '';
+      document.getElementById('lineSecretInput').value = data.line.channelSecretMasked || '';
+      document.getElementById('lineTokenInput').value = data.line.channelAccessTokenMasked || '';
+
+      // Facebook
+      document.getElementById('fbWebhookUrlInput').value = data.facebook.webhookUrl;
+      const vFb = document.getElementById('viewFbWebhookUrl');
+      if (vFb) vFb.value = data.facebook.webhookUrl;
+      document.getElementById('fbVerifyTokenInput').value = data.facebook.verifyToken || '';
+      document.getElementById('fbSecretInput').value = data.facebook.appSecretMasked || '';
+      document.getElementById('fbTokenInput').value = data.facebook.pageAccessTokenMasked || '';
+    } catch (err) {
+      console.error('Failed to load channel configs:', err);
+    }
+  }
+
+  async function saveLineChannelConfig() {
+    const channelId = document.getElementById('lineChannelIdInput').value.trim();
+    const channelSecret = document.getElementById('lineSecretInput').value.trim();
+    const channelAccessToken = document.getElementById('lineTokenInput').value.trim();
+
+    try {
+      const res = await fetch('/api/channels/config', {
+        method: 'POST',
+        headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ channelType: 'line', channelId, channelSecret, channelAccessToken, isActive: true })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('✅ บันทึกการตั้งค่า LINE Official Account สำเร็จ!');
+        await loadChannelConfigs();
+      } else {
+        alert('❌ ข้อผิดพลาด: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Save error: ' + err.message);
+    }
+  }
+
+  async function saveFacebookChannelConfig() {
+    const verifyToken = document.getElementById('fbVerifyTokenInput').value.trim();
+    const channelSecret = document.getElementById('fbSecretInput').value.trim();
+    const channelAccessToken = document.getElementById('fbTokenInput').value.trim();
+
+    try {
+      const res = await fetch('/api/channels/config', {
+        method: 'POST',
+        headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ channelType: 'facebook', channelId: verifyToken, channelSecret, channelAccessToken, isActive: true })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert('✅ บันทึกการตั้งค่า Facebook Messenger สำเร็จ!');
+        await loadChannelConfigs();
+      } else {
+        alert('❌ ข้อผิดพลาด: ' + (data.error || 'Unknown error'));
+      }
+    } catch (err) {
+      alert('Save error: ' + err.message);
+    }
+  }
+
+  function copyInputText(inputId) {
+    const el = document.getElementById(inputId);
+    if (!el) return;
+    el.select();
+    navigator.clipboard.writeText(el.value).then(() => {
+      alert('📋 คัดลอกเรียบร้อยแล้ว: ' + el.value);
+    }).catch(() => {
+      document.execCommand('copy');
+      alert('📋 คัดลอกเรียบร้อยแล้ว: ' + el.value);
+    });
+  }
+
+  function testSimulateLine() {
+    closeChannelModal();
+    switchNav('chat');
+    switchChatSubtab('sim');
+    sendQuickPrompt('สวัสดีครับ ขอสอบถามข้อมูลแปลงที่ดินผ่อนตรงหน่อยครับ (ทดสอบผ่าน LINE)');
+  }
+
+  function testSimulateFacebook() {
+    closeChannelModal();
+    switchNav('chat');
+    switchChatSubtab('sim');
+    sendQuickPrompt('สวัสดีครับ ทักมาจากเพจ Facebook สนใจดูแปลง A1 ภูธารา ครับ');
+  }
+
+  function openNewBookingModal() {
+    const name = prompt('กรอกชื่อลูกค้าที่ต้องการนัดหมายชมแปลง:');
+    if (!name) return;
+    const phone = prompt('กรอกเบอร์โทรติดต่อ:');
+    if (!phone) return;
+    const plot = prompt('กรอกแปลงที่ดินที่สนใจ (เช่น A1 ภูธารา, B1 กรีนวัลเลย์):', 'A1 ภูธารา');
+    const date = prompt('กรอกวัน-เวลาที่สะดวก (เช่น เสาร์ 4 ต.ค. 10:30 น.):', 'เสาร์นี้ 10:00 น.');
+
+    const tbody = document.getElementById('appointmentsTableBody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td><code>BK-${Date.now().toString().slice(-4)}</code></td>
+      <td><strong>${escapeHtml(name)}</strong></td>
+      <td style="color: #ea580c; font-weight: 600;">${escapeHtml(phone)}</td>
+      <td>${escapeHtml(plot)}</td>
+      <td>${escapeHtml(date)}</td>
+      <td>Sarah Sales (VIP)</td>
+      <td><span class="status-badge status-active">● ยืนยันแล้ว (Confirmed)</span></td>
+      <td><button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="alert('ส่ง SMS ยืนยันแล้ว')">📲 ส่งเตือน</button></td>
+    `;
+    tbody.prepend(tr);
+    alert('✅ เพิ่มการนัดหมายลงตารางเรียบร้อยแล้ว!');
+  }
+
+  // --- Live Chat Simulator Logic ---
+  function sendQuickPrompt(text) {
+    document.getElementById('chatInput').value = text;
+    sendMessage();
+  }
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+
+    const chatMessages = document.getElementById('chatMessages');
+    const custBubble = document.createElement('div');
+    custBubble.className = 'chat-bubble customer';
+    custBubble.innerText = text;
+    chatMessages.appendChild(custBubble);
+
+    const payload = {
+      channelType: 'web',
+      channelMessageId: `msg_${Date.now()}`,
+      channelUserId: 'user_somchai_081',
+      senderName: 'Khun Somchai',
+      content: text,
+      conversationId: currentConversationId
+    };
+
+    try {
+      const res = await fetch('/api/webhooks/synthetic', {
+        method: 'POST',
+        headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json();
+      currentConversationId = data.conversationId;
+
+      if (data.orchestratorResult) {
+        const result = data.orchestratorResult;
+        if (result.isBotPaused) {
+          updateBotStateUI(true);
+          const pausedNote = document.createElement('div');
+          pausedNote.className = 'chat-bubble system';
+          pausedNote.innerText = `⏸️ บอทถูกระงับการตอบอัตโนมัติ (เหตุผล: ${result.pauseReason || 'Human Handoff'})`;
+          chatMessages.appendChild(pausedNote);
+        } else if (result.replyMessage) {
+          const botBubble = document.createElement('div');
+          botBubble.className = 'chat-bubble agent_ai';
+          botBubble.innerHTML = result.replyMessage.content.replace(/\n/g, '<br>');
+
+          if (result.citations && result.citations.length > 0) {
+            result.citations.forEach(c => {
+              const citeBox = document.createElement('div');
+              citeBox.className = 'citation-box';
+              citeBox.innerHTML = `
+                <div class="citation-title">📌 ${c.title}</div>
+                <div class="citation-snippet">${c.snippet}</div>
+                <div class="citation-meta">อัปเดต ณ ${c.effectiveDate} | Authoritative Source</div>
+              `;
+              botBubble.appendChild(citeBox);
+            });
+          }
+          chatMessages.appendChild(botBubble);
+        }
+
+        if (result.toolCallsExecuted && result.toolCallsExecuted.length > 0) {
+          const list = document.getElementById('inspectorToolsList');
+          list.innerHTML = result.toolCallsExecuted.map(t => `
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+              <span class="status-badge status-active">⚡ ${t}</span>
+              <span style="font-size: 0.75rem; color: var(--success);">SUCCESS</span>
+            </div>
+          `).join('');
+        }
+      }
+
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      loadAnalytics();
+      loadLeads();
+      loadDashboardData();
+    } catch (err) {
+      console.error('Chat error:', err);
+    }
+  }
+
+  function updateBotStateUI(isPaused) {
+    const badge = document.getElementById('botGlobalState');
+    if (isPaused) {
+      badge.className = 'status-badge status-paused';
+      badge.innerText = '⏸️ Bot Paused (Handoff)';
+    } else {
+      badge.className = 'status-badge status-active';
+      badge.innerText = '● Agent Running';
+    }
+  }
+
+  async function toggleBotPause(pause) {
+    if (!currentConversationId) {
+      alert('กรุณาส่งข้อความเพื่อเปิดการสนทนาก่อนปรับสถานะ');
+      return;
+    }
+    const endpoint = pause ? `/api/conversations/${currentConversationId}/pause` : `/api/conversations/${currentConversationId}/resume`;
+    await fetch(endpoint, {
+      method: 'POST',
+      headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ reason: pause ? 'เจ้าหน้าที่กดระงับจากหน้าจอ' : undefined })
+    });
+    updateBotStateUI(pause);
+    const chatMessages = document.getElementById('chatMessages');
+    const note = document.createElement('div');
+    note.className = 'chat-bubble system';
+    note.innerText = pause ? '⏸️ เจ้าหน้าที่กดระงับบอท (Bot Paused)' : '▶️ เจ้าหน้าที่เปิดให้บอทกลับมาตอบอัตโนมัติ (Bot Resumed)';
+    chatMessages.appendChild(note);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+  }
+
+  // --- Unified Inbox Logic ---
+  let inboxConversations = [];
+  let selectedConvId = null;
+
+  async function loadInboxConversations() {
+    try {
+      const res = await fetch('/api/conversations', { headers: getApiHeaders() });
+      const data = await res.json();
+      inboxConversations = data.conversations || [];
+      renderInboxList();
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function renderInboxList() {
+    const list = document.getElementById('inboxConvList');
+    if (!list) return;
+    if (inboxConversations.length === 0) {
+      list.innerHTML = `<div style="text-align: center; color: var(--text-dim); padding: 1.5rem;">ไม่มีบทสนทนา</div>`;
+      return;
+    }
+    list.innerHTML = inboxConversations.map(c => `
+      <div class="inspector-box" style="cursor: pointer; padding: 0.65rem 0.85rem;" onclick="selectInboxConv('${c.id}')">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <strong style="font-size: 0.85rem;">${c.contactId || 'Customer'}</strong>
+          <span class="status-badge ${c.botPaused ? 'status-paused' : 'status-active'}" style="font-size: 0.68rem;">${c.botPaused ? 'Paused' : 'Active'}</span>
+        </div>
+        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top: 3px;">${c.channelType || 'web'} • ${new Date(c.updatedAt).toLocaleTimeString('th-TH')}</div>
+      </div>
+    `).join('');
+  }
+
+  function setInboxFilter(filter) {
+    alert(`กรองสถานะ: ${filter}`);
+  }
+
+  async function selectInboxConv(id) {
+    selectedConvId = id;
+    document.getElementById('inboxThreadTitle').innerText = `บทสนทนา: ${id}`;
+    document.getElementById('inboxInputArea').style.display = 'flex';
+    document.getElementById('dossierContactName').innerText = 'คุณสมชาย';
+    document.getElementById('dossierContactPhone').innerText = '081-234-5678';
+    document.getElementById('dossierChannelType').innerText = 'LINE OA';
+    document.getElementById('dossierLeadZone').innerText = 'กาญจนบุรี (วิวเขา)';
+    document.getElementById('dossierLeadBudget').innerText = '500,000 บาท';
+    document.getElementById('dossierLeadStatus').innerText = 'qualified';
+
+    const box = document.getElementById('inboxMessages');
+    box.innerHTML = `
+      <div class="chat-bubble customer">สวัสดีครับ ขอดูที่ดินวิวเขาสวยงบไม่เกิน 5 แสนครับ</div>
+      <div class="chat-bubble agent_ai">สวัสดีค่ะ! น้อง Chatto ยินดีให้บริการค่ะ แนะนำแปลง A1 โครงการภูธารา 100 ตร.ว. 450,000 บาท ผ่อน 0% ได้ค่ะ</div>
+    `;
+  }
+
+  async function sendInboxAction() {
+    const input = document.getElementById('inboxInput');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    const box = document.getElementById('inboxMessages');
+    const bubble = document.createElement('div');
+    bubble.className = 'chat-bubble customer';
+    bubble.style.background = '#0284c7';
+    bubble.innerText = `[เจ้าหน้าที่ตอบ]: ${text}`;
+    box.appendChild(bubble);
+  }
+
+  function saveDossierAssignment() {
+    alert('✅ บันทึกผู้ดูแลเรียบร้อยแล้ว');
+  }
+
+  // --- Leads & Inventory Loaders ---
+  async function loadLeads() {
+    try {
+      const res = await fetch('/api/leads', { headers: getApiHeaders() });
+      const data = await res.json();
+      const tbody = document.getElementById('leadsTableBody');
+      const dashList = document.getElementById('dashRecentLeadsList');
+      if (!data.leads || data.leads.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">ยังไม่มี Lead ที่ถูกบันทึก</td></tr>`;
+        if (dashList) dashList.innerHTML = `<div style="text-align: center; color: var(--text-dim); padding: 1rem;">ยังไม่มี Leads</div>`;
+        return;
+      }
+
+      tbody.innerHTML = data.leads.map(l => `
+        <tr>
+          <td><code>${l.id}</code></td>
+          <td style="color: #ea580c; font-weight: 700;">${l.phone || '-'}</td>
+          <td>${l.preferredZone || '-'}</td>
+          <td>${l.maxBudgetThb ? l.maxBudgetThb.toLocaleString('th-TH') : '-'}</td>
+          <td><span class="status-badge status-active">${l.source || 'web'}</span></td>
+          <td><strong>${l.status}</strong></td>
+          <td>${new Date(l.createdAt).toLocaleTimeString('th-TH')}</td>
+        </tr>
+      `).join('');
+
+      if (dashList) {
+        dashList.innerHTML = data.leads.slice(0, 3).map(l => `
+          <div class="inspector-box" style="padding: 0.65rem 0.85rem; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+              <strong style="color: #ea580c;">${l.phone || 'Lead'}</strong>
+              <div style="font-size: 0.75rem; color: var(--text-muted);">${l.preferredZone || 'โซนทั่วไป'} • งบ ${l.maxBudgetThb ? l.maxBudgetThb.toLocaleString('th-TH') + ' บ.' : '-'}</div>
+            </div>
+            <span class="status-badge status-active">${l.status}</span>
+          </div>
+        `).join('');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadInventory() {
+    try {
+      const res = await fetch('/api/inventory', { headers: getApiHeaders() });
+      const data = await res.json();
+      const tbody = document.getElementById('inventoryTableBody');
+      if (!data.plots) return;
+      tbody.innerHTML = data.plots.map(p => `
+        <tr>
+          <td><code>${p.plotId}</code></td>
+          <td><strong>${p.projectName}</strong></td>
+          <td>${p.plotNumber}</td>
+          <td>${p.areaSqWah}</td>
+          <td style="color: #ea580c; font-weight: 700;">${p.priceThb.toLocaleString('th-TH')}</td>
+          <td>${p.titleDeed}</td>
+          <td><span class="status-badge ${p.status === 'available' ? 'status-active' : 'status-paused'}">${p.status}</span></td>
+          <td>${p.effectiveDate}</td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // --- Audit & Analytics Loaders ---
+  async function loadAnalytics() {
+    try {
+      const res = await fetch('/api/analytics', { headers: getApiHeaders() });
+      const data = await res.json();
+      if (data.metrics) {
+        document.getElementById('statMessages').innerText = data.metrics.messagesReceived;
+        document.getElementById('statLeads').innerText = data.metrics.leadsCaptured;
+        document.getElementById('statHandoffs').innerText = data.metrics.handoffsTriggered;
+        document.getElementById('statConversion').innerText = data.metrics.conversionRate + '%';
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadAuditLogs() {
+    try {
+      const res = await fetch('/api/audit-logs', { headers: getApiHeaders() });
+      const data = await res.json();
+      const tbody = document.getElementById('auditTableBody');
+      if (!data.auditLogs || data.auditLogs.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dim);">ไม่มีบันทึก Audit</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = data.auditLogs.map(a => `
+        <tr>
+          <td><code>${a.id.slice(0, 10)}...</code></td>
+          <td><code>${a.correlationId}</code></td>
+          <td><span class="status-badge status-active">${a.action}</span></td>
+          <td>${a.actorType} (${a.actorId})</td>
+          <td>${a.resourceType}</td>
+          <td><pre style="font-size: 0.72rem; max-width: 240px; overflow: hidden; text-overflow: ellipsis;">${JSON.stringify(a.payload)}</pre></td>
+          <td>${new Date(a.createdAt).toLocaleTimeString('th-TH')}</td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  // --- Knowledge Ingestion & Studio ---
+  async function refreshStudioData() {
+    await Promise.all([loadKnowledgeSources(), loadPromptVersions(), loadActivePrompt()]);
+  }
+
+  async function loadKnowledgeSources() {
+    try {
+      const res = await fetch('/api/knowledge/sources', { headers: getApiHeaders() });
+      const data = await res.json();
+      const tbody = document.getElementById('knowledgeSourcesTableBody');
+      if (!data.sources || data.sources.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; color: var(--text-dim); padding: 1.5rem;">ยังไม่มี Knowledge Sources</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = data.sources.map(s => `
+        <tr>
+          <td><code>${s.id}</code></td>
+          <td><strong>${escapeHtml(s.title)}</strong></td>
+          <td><span class="status-badge status-active">${s.sourceType}</span></td>
+          <td><strong>${s.chunkCount}</strong> chunks</td>
+          <td>${s.effectiveDate || '-'}</td>
+          <td><button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.75rem;" onclick="viewChunksForSource('${s.id}')">ดู Chunks</button></td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function viewChunksForSource(sourceId) {
+    try {
+      const res = await fetch('/api/knowledge?q=', { headers: getApiHeaders() });
+      const data = await res.json();
+      const modal = document.getElementById('chunkModal');
+      const list = document.getElementById('chunkModalList');
+      modal.style.display = 'flex';
+      list.innerHTML = data.items.map(c => `
+        <div class="inspector-box">
+          <div style="font-size: 0.75rem; color: #ea580c; font-weight: 700;">Chunk ID: ${c.id}</div>
+          <div style="font-size: 0.82rem; margin-top: 4px;">${escapeHtml(c.content)}</div>
+        </div>
+      `).join('');
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
+  function closeChunkModal() {
+    document.getElementById('chunkModal').style.display = 'none';
+  }
+
+  async function handleIngestSubmit(event) {
+    event.preventDefault();
+    const title = document.getElementById('ingestTitle').value.trim();
+    const sourceType = document.getElementById('ingestType').value;
+    const content = document.getElementById('ingestContent').value.trim();
+
+    try {
+      const res = await fetch('/api/knowledge/ingest', {
+        method: 'POST',
+        headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+        body: JSON.stringify({ title, sourceType, content })
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert(`✅ ประมวลผลเอกสารสำเร็จ! สร้างได้ ${data.chunkCount} Chunks`);
+        document.getElementById('ingestForm').reset();
+        await loadKnowledgeSources();
+      } else {
+        alert('❌ Error: ' + data.error);
+      }
+    } catch (e) {
+      alert('Ingest error: ' + e.message);
+    }
+  }
+
+  // --- Prompt Studio Versioning ---
+  let promptVersionsCache = [];
+
+  async function loadActivePrompt() {
+    try {
+      const res = await fetch('/api/agent/prompts/active', { headers: getApiHeaders() });
+      const data = await res.json();
+      if (data.activePrompt) {
+        document.getElementById('activePersonaDisplay').innerText = data.activePrompt.personaName;
+        document.getElementById('activePromptVer').innerText = `v${data.activePrompt.version}`;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function loadPromptVersions() {
+    try {
+      const res = await fetch('/api/agent/prompts/versions', { headers: getApiHeaders() });
+      const data = await res.json();
+      promptVersionsCache = data.versions || [];
+      const tbody = document.getElementById('promptVersionsTableBody');
+      if (promptVersionsCache.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-dim);">ไม่มีประวัติ</td></tr>`;
+        return;
+      }
+      tbody.innerHTML = promptVersionsCache.map(v => `
+        <tr>
+          <td><code>v${v.version}</code></td>
+          <td><strong>${escapeHtml(v.personaName)}</strong></td>
+          <td><span class="status-badge ${v.status === 'published' ? 'status-active' : 'status-paused'}">${v.status}</span></td>
+          <td>${new Date(v.createdAt).toLocaleTimeString('th-TH')}</td>
+          <td>
+            ${v.status === 'draft' ? `<button class="btn" style="padding: 2px 8px; font-size: 0.72rem;" onclick="publishPromptVer(${v.version})">🚀 เผยแพร่</button>` : ''}
+            <button class="btn btn-secondary" style="padding: 2px 8px; font-size: 0.72rem;" onclick="loadPromptIntoEditor(${v.version})">✏️ โหลด</button>
+          </td>
+        </tr>
+      `).join('');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  async function savePromptDraft() {
+    const personaName = document.getElementById('promptPersonaName').value.trim();
+    const systemPrompt = document.getElementById('promptSystemContent').value.trim();
+    const businessRules = document.getElementById('promptBusinessRules').value.trim();
+    if (!personaName || !systemPrompt) return alert('กรุณากรอกข้อมูลให้ครบถ้วน');
+
+    const res = await fetch('/api/agent/prompts/draft', {
+      method: 'POST',
+      headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ personaName, systemPrompt, businessRules })
+    });
+    const data = await res.json();
+    if (data.success) {
+      alert(`✅ บันทึกแบบร่าง v${data.prompt.version} สำเร็จ!`);
+      await loadPromptVersions();
+    }
+  }
+
+  async function handlePromptSubmit(event) {
+    event.preventDefault();
+    const personaName = document.getElementById('promptPersonaName').value.trim();
+    const systemPrompt = document.getElementById('promptSystemContent').value.trim();
+    const businessRules = document.getElementById('promptBusinessRules').value.trim();
+
+    const draftRes = await fetch('/api/agent/prompts/draft', {
+      method: 'POST',
+      headers: getApiHeaders({ 'Content-Type': 'application/json' }),
+      body: JSON.stringify({ personaName, systemPrompt, businessRules })
+    });
+    const draftData = await draftRes.json();
+    if (!draftData.success) return alert(draftData.error);
+
+    const pubRes = await fetch(`/api/agent/prompts/${draftData.prompt.version}/publish`, {
+      method: 'POST',
+      headers: getApiHeaders()
+    });
+    const pubData = await pubRes.json();
+    if (pubData.success) {
+      alert(`🎉 เผยแพร่ Persona Version ${pubData.prompt.version} สำเร็จ!`);
+      await refreshStudioData();
+    }
+  }
+
+  async function publishPromptVer(ver) {
+    await fetch(`/api/agent/prompts/${ver}/publish`, { method: 'POST', headers: getApiHeaders() });
+    await refreshStudioData();
+  }
+
+  function loadPromptIntoEditor(version) {
+    const v = promptVersionsCache.find(i => i.version === version);
+    if (!v) return;
+    document.getElementById('promptPersonaName').value = v.personaName || '';
+    document.getElementById('promptSystemContent').value = v.systemPrompt || '';
+    document.getElementById('promptBusinessRules').value = v.businessRules || '';
+    alert(`โหลด Version ${version} เข้าสู่ฟอร์มเรียบร้อยแล้ว`);
+  }
+
+  // --- Sample Ingestion Pre-loaders ---
+  function loadSampleCsv() {
+    document.getElementById('ingestTitle').value = 'ตารางราคาและสถานะที่ดิน The Hill Land (ก.ย. 2026)';
+    document.getElementById('ingestType').value = 'csv';
+    document.getElementById('ingestContent').value = `plot_id,project_name,plot_number,area_sqwah,price_thb,title_deed,status,notes
+PL-A1,ภูธารา (Phu Thara),A1,100,450000,โฉนดครุฑแดง น.ส.4 จ.,available,วิวเขาสวย ติดถนนลาดยาง ไฟฟ้า-น้ำประปาพร้อม
+PL-A2,ภูธารา (Phu Thara),A2,120,540000,โฉนดครุฑแดง น.ส.4 จ.,reserved,จองแล้ว นัดทำสัญญาโอน 30 ก.ย.
+PL-B1,กรีนวัลเลย์ (Green Valley),B1,200,890000,โฉนดครุฑแดง น.ส.4 จ.,available,แปลงมุม ใกล้ลำธารธรรมชาติ ผ่อน 0% นาน 24 เดือน`;
+  }
+
+  function loadSampleTextPolicy() {
+    document.getElementById('ingestTitle').value = 'คู่มือนโยบายสิทธิ์การถือครองและสัญญาผ่อนตรง The Hill Land';
+    document.getElementById('ingestType').value = 'text';
+    document.getElementById('ingestContent').value = `# นโยบายและมาตรฐานเอกสารสิทธิ์ The Hill Land
+## 1. การันตีโฉนดครุฑแดงแท้ 100%
+- ที่ดินทุกแปลงภายใต้การดูแลของ The Hill Land เป็นโฉนดที่ดิน น.ส.4 จ. (ครุฑแดง) ถูกต้องตามกฎหมายกรมที่ดิน
+- มีหลักเขตชัดเจน รังวัดด้วยระบบดาวเทียม RTK ทุกล็อค พร้อมส่งมอบโอนกรรมสิทธิ์ ณ สำนักงานที่ดินจังหวัด
+## 2. โปรโมชั่นผ่อนตรงกับโครงการ 0%
+- ดาวน์เริ่มต้นเพียง 10% สัญญาผ่อนตรงระยะเวลาสูงสุด 36 เดือน ไม่มีดอกเบี้ย (0%) ไม่เช็คเครดิตบูโร`;
+  }
+
+  function loadSampleFaq() {
+    document.getElementById('ingestTitle').value = 'ถาม-ตอบข้อสงสัยการซื้อขายที่ดินและสาธารณูปโภค (FAQ)';
+    document.getElementById('ingestType').value = 'faq';
+    document.getElementById('ingestContent').value = `Q: แปลงที่ดินมีระบบไฟฟ้าและน้ำประปาพร้อมหรือไม่?
+A: โครงการ The Hill Land ดำเนินการขยายเขตไฟฟ้าส่วนภูมิภาค (PEA) และวางท่อเมนประปาส่วนภูมิภาคถึงหน้าทุกแปลง
+Q: ค่าธรรมเนียมการโอน ภาษี ใครเป็นผู้รับผิดชอบ?
+A: ค่าธรรมเนียมโอนกรรมสิทธิ์ 2% คนละครึ่ง ส่วนภาษีหัก ณ ที่จ่าย และธุรกิจเฉพาะ ทางโครงการ The Hill Land เป็นผู้รับผิดชอบทั้งหมด`;
+  }
+
+  function escapeHtml(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  }
+
+  // --- Switch Tenant ---
+  function switchTenant(tenant) {
+    activeTenant = tenant;
+    document.getElementById('currentChatUser').innerText = tenant === 'the-hill-land' 
+      ? 'Khun Somchai (The Hill Land Prospect)' 
+      : 'Prospect Beta (Beta Realty)';
+    
+    currentConversationId = null;
+    loadAnalytics();
+    loadLeads();
+    loadDashboardData();
+  }
+
+  // --- Theme Toggle Logic ---
+  function initTheme() {
+    const saved = localStorage.getItem('chatto_theme') || 'light';
+    applyTheme(saved);
+  }
+
+  function applyTheme(theme) {
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-theme', theme);
+    const icon = document.getElementById('themeToggleIcon');
+    const text = document.getElementById('themeToggleText');
+    if (theme === 'dark') {
+      if (icon) icon.innerText = '☀️';
+      if (text) text.innerText = 'Light Mode';
+    } else {
+      if (icon) icon.innerText = '🌙';
+      if (text) text.innerText = 'Dark Mode';
+    }
+    localStorage.setItem('chatto_theme', theme);
+  }
+
+  function toggleTheme() {
+    const curr = document.documentElement.getAttribute('data-theme') || 'light';
+    applyTheme(curr === 'light' ? 'dark' : 'light');
+  }
+
+  // Initial Boot
+  initTheme();
+  switchNav('dashboard');
+</script>
+</body>
+</html>

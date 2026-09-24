@@ -1,0 +1,33 @@
+{
+  "name": "chatto-bot-ai-operations",
+  "version": "1.0.0",
+  "description": "Chatto Bot — Multi-tenant AI Operations SaaS Platform - Design Partner: The Hill Land",
+  "main": "apps/api/src/server.ts",
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch apps/api/src/server.ts",
+    "start": "tsx apps/api/src/server.ts",
+    "test": "tsx --test tests/**/*.test.ts",
+    "lint": "tsc --noEmit",
+    "check:brand": "tsx scripts/check-brand-compliance.ts",
+    "ci": "npm run lint && npm run check:brand && npm test"
+  },
+  "keywords": [
+    "ai-operations",
+    "saas",
+    "multi-tenant",
+    "the-hill-land",
+    "chatto-bot",
+    "chaty-bot"
+  ],
+  "author": "Chatto Bot Team",
+  "license": "UNLICENSED",
+  "dependencies": {
+    "zod": "^3.23.8"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2"
+  }
+}
