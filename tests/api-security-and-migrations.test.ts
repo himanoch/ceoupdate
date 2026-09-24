@@ -19,7 +19,7 @@ describe('Database Migration & Persistence Gate', () => {
 
     // 1. Verify schema_migrations table exists and contains registered versions
     const applied = MigrationRunner.getAppliedMigrations(rawDb);
-    assert.strictEqual(applied.length, 4, 'Should have exactly 4 applied migrations');
+    assert.strictEqual(applied.length, 5, 'Should have exactly 5 applied migrations');
     assert.strictEqual(applied[0].version, '001');
     assert.strictEqual(applied[0].name, 'initial_schema');
     assert.strictEqual(applied[1].version, '002');
@@ -28,6 +28,8 @@ describe('Database Migration & Persistence Gate', () => {
     assert.strictEqual(applied[2].name, 'unified_inbox_and_collision_guards');
     assert.strictEqual(applied[3].version, '004');
     assert.strictEqual(applied[3].name, 'agent_studio_and_prompts');
+    assert.strictEqual(applied[4].version, '005');
+    assert.strictEqual(applied[4].name, 'job_queue');
 
     // 2. Running migrations again must be a no-op (idempotent)
     const secondRun = MigrationRunner.runAll(rawDb);
